@@ -1,6 +1,6 @@
 # Main Page
 
-### Tried to make note for C Advanced Course of netacad.com .
+Tried to make note for C Advanced Course of netacad.com .
 
 {% page-ref page="module-1.md" %}
 

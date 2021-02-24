@@ -294,3 +294,33 @@ struct in_addr{
 };
 ```
 
+{% hint style="warning" %}
+in\_addr structure er kotha bolini
+{% endhint %}
+
+### Example : We’ve used the getprotobynumber\(\) function in a very simple example →
+
+```c
+#include <stdio.h>
+#ifdef _MSC_VER
+	#include <Winsock2.h>
+	#pragma comment(lib, "ws2_32.lib")
+#else
+	#include <arpa/inet.h>
+	#include <netdb.h>
+#endif
+
+int main(void) {
+
+#ifdef _MSC_VER
+	WSADATA wsa;
+	WSAStartup(0x0202, &wsa);
+#endif	
+	printf("%s\n", inet_ntoa(*((struct in_addr *)gethostbyname("www.cppinstitute.org")->h_addr)));
+#ifdef _MSC_VER
+	WSACleanup();
+#endif		
+	return 0;
+}
+```
+
