@@ -166,7 +166,7 @@ The file consists of columns containing, in order:
 
 ### The function getprotobyname\(\)
 
-The getprotobyname\(\) function → gets only one argument – the **name of the protocol**.
+The `getprotobyname()` function → gets only one argument – the **name of the protocol**.
 
 It **returns a pointer** to the structure filled with the protocol’s data, or NULL if there’s no such protocol in the protocols file.
 
@@ -175,19 +175,122 @@ Note: the function stores the structure inside its own **static** data. This mea
 {% endhint %}
 
 ```c
-struct protoent{
-    char *p_name;     /* official protocol name */
-    char **p_aliases; /* alias list             */
-    int p_proto;      /* protocol number        */
-};
-```
-
-```c
 #include <netdb.h>    /* UNIX/LINUX */
 #include <Winsock2.h> /* MS Windows  */
 
 struct protoent *getprotobyname(char *name);
 ```
 
+```c
+struct protoent{
+    char  *p_name;    /* official protocol name */
+    char **p_aliases; /* alias list             */
+    int    p_proto;   /* protocol number        */
+};
+```
 
+### Example: Here’s a simple \(and not very safe\) example of using the getprotobynumber\(\) function →
+
+```c
+#include <stdio.h>
+#ifdef _MSC_VER
+	#include <Winsock2.h>
+	#pragma comment(lib, "ws2_32.lib")
+#else
+	#include <netdb.h>
+#endif
+
+int main(void) {
+
+#ifdef _MSC_VER
+	WSADATA wsa;
+	WSAStartup(0x0202, &wsa);
+#endif
+	printf("%d\n", getprotobyname("tcp")->p_proto);
+#ifdef _MSC_VER
+	WSACleanup();
+#endif
+	return 0;
+}
+
+```
+
+{% hint style="danger" %}
+Code kaj e kore ni 😑😑😑 
+{% endhint %}
+
+### Creating Socket
+
+To **create a new socket**, we use the socket\(\) function →
+
+```c
+#include <netdb.h>    /* UNIX/LINUX */
+#include <Winsock2.h> /* MS Windows  */
+
+int socket(int domain, int type, int protocol);
+```
+
+The function takes three arguments:
+
+* a **domain code** \(we may use the AF\_INET symbol here to specify the Internet socket domain\)
+* a **socket type code** \(we may use the SOCK\_STREAM symbol here to specify the high-level socket able to act as a _character device_ \(a character device that can handle single characters, e.g., a terminal is a character device while a disk isn’t\)
+* a **protocol number**.
+
+The function returns a **newly created socket descriptor**, or -1 on error.
+
+{% hint style="warning" %}
+Note: the descriptor may be used like a _file descriptor_ in Unix/Linux \(e.g. it may be passed as an argument to functions like read\(\), write\(\) or close\(\)\), but such use is prohibited in MS Windows \(e.g. MS Windows has a dedicated function named closesocket\(\) to close the opened socket\).
+{% endhint %}
+
+### The function gethostbyname\(\)
+
+The `gethostbyname()` function → gets only one argument – the name of the host.
+
+It returns a **pointer to the structure** filled with the host data, or NULL if there is no host of that name.
+
+{% hint style="danger" %}
+Note: the function is **not thread-safe**.
+{% endhint %}
+
+```c
+#include <netdb.h>    /* UNIX/LINUX */
+#include <Winsock2.h> /* MS Windows  */
+
+struct hostent *gethostbyname(const char *name);
+```
+
+```c
+struct hostent{
+    char  *h_name;       /* official name of host */
+    char **h_aliases;    /* alias list            */
+    int    h_addrtype;   /* host address type     */
+    int    h_length;     /* lenghth of address    */
+    char **h_addr_list;  /* list of addresses     */
+};
+```
+
+### The Function inet\_ntoa\(\)
+
+The `inet_ntoa()` function → gets only one argument – an **internal form of an IP address** \(four octets\).
+
+The name of the function comes from _INET numeric to ASCII_.
+
+It returns a pointer to a string containing a **human-readable \(dotted\) form of the specified IP address**.
+
+{% hint style="danger" %}
+Note: the function is **not thread-safe**.
+{% endhint %}
+
+```c
+#include <arpa/inet.h> /* UNIX/LINUX */
+#include <Winsock2.h>  /* MS Windows  */
+
+char *inet_ntoa(struct in_addr in);
+```
+
+```c
+struct in_addr{
+    unsigned long s_addr;
+};
+```
 
